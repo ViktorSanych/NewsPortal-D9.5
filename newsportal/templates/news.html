@@ -1,0 +1,83 @@
+<! -- наследование шаблона default -->
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% block title %} Posts {% endblock title %}
+
+<! -- начало контента -->
+{% block content %}
+<div class="col-lg-12 text-center">
+    <h1>Все посты</h1>
+    <h3>Всего постов: {{ news|length }}</h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Заголовок</th>
+            <th scope="col">Тип статьи</th>
+            <th scope="col">Дата публикации</th>
+            <th scope="col">Автор</th>
+            <th scope="col">Текст</th>
+            <th scope="col">Ссылка на статью</th>
+            <th scope="col">Редактировать</th>
+            <th scope="col">Удалить</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for post in news %}
+        <tr>
+            <th scope="row">{{ post.title|censor }}</th>
+            {% if post.type == 'AR' %}
+                <td>Статья</td>
+            {% else %}
+                <td>Новость</td>
+            {% endif %}
+            <td>{{ post.time | date:'d M Y' }}</td>
+            <td>{{ post.author_id }}</td>
+            <td>{{ post.text | truncatechars:20|censor }}</td>
+            <td><a class="btn btn-primary btn-sm" href="/news/{{ post.pk }}">Читать</a></td>
+            <td><a class="btn btn-primary btn-sm" href="/news/news/{{ post.pk }}/edit/">Редактировать</a></td>
+            <td><a class="btn btn-primary btn-sm" href="/news/news/{{ post.pk }}/delete/">Удалить</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{# Пагинация на странице #}
+<hr class="mt-4">
+
+<div class="row">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_other_pages %}
+            <nav class="list-pages">
+                <ul>
+                    {% if page_obj.has_previous %}
+                    <span class="page-num">
+                        <a href="?page={{ page_obj.previous_page_number }}">&lt;</a>
+                        </span>
+                    {% endif %}
+                    {% for p in paginator.page_range %}
+                    {% if page_obj.number == p %}
+                    <span class="page-num page-num-selected">{{ p }}</span>
+                    {% elif p >= page_obj.number|add:-4 and p <= page_obj.number|add:4 %}
+                    <span class="page-num">
+                        <a href="?page={{ p }}">{{ p }}</a>
+                    </span>
+                    {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <span class="page-num">
+                        <a href="?page={{ page_obj.next_page_number }}">&gt;</a>
+                    </span>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+            </nav>
+        </ul>
+    </nav>
+</div>
+<! -- конец контента -->
+{% endblock content %}
