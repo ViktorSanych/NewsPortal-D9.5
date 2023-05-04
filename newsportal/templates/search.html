@@ -37,7 +37,7 @@ Search
         <tr>
             <th scope="row">{{ post.title }}</th>
             <td>{{ post.time }}</td>
-            <td>{{ post.author_id }}</td>
+            <td>{{ post.author.user.username }}</td>
             <td>{{ post.text | truncatewords:20 | censor}}</td>
             <td><a class="btn btn-primary btn-sm" href="/news/news/{{ post.pk }}">Читать</a></td>
             <td><a class="btn btn-primary btn-sm" href="/news/news/{{ post.pk }}/edit/">Редактировать</a></td>

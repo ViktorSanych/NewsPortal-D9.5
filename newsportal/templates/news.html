@@ -33,7 +33,7 @@
                 <td>Новость</td>
             {% endif %}
             <td>{{ post.time | date:'d M Y' }}</td>
-            <td>{{ post.author_id }}</td>
+            <td>{{ post.author.user.username }}</td>
             <td>{{ post.text | truncatechars:20|censor }}</td>
             <td><a class="btn btn-primary btn-sm" href="/news/{{ post.pk }}">Читать</a></td>
             <td><a class="btn btn-primary btn-sm" href="/news/news/{{ post.pk }}/edit/">Редактировать</a></td>
