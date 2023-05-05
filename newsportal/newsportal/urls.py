@@ -24,4 +24,6 @@ urlpatterns = [
     # чтобы все адреса из файла news_portal_app/urls.py
     # сами автоматически подключались когда мы их добавим.
     path('news/', include('news_portal_app.urls')),
+    path('protect/', include('protect.urls')),
+    path('accounts/', include('allauth.urls')),
 ]

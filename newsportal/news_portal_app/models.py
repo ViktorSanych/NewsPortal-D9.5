@@ -52,7 +52,6 @@ class Post(models.Model):
         return f"{self.text[:length]}..." if len(str(self.text)) > length else self.text
 
     def get_absolute_url(self):
-        """ Вернуть url, зарегистрированный для отображения одиночного товара """
         return reverse('post_detail', args=[str(self.id)])
 
 

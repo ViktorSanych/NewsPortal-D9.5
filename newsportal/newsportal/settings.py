@@ -26,7 +26,15 @@ SECRET_KEY = 'django-insecure-*my!lkup7esa11$sawjbkx4pod%kjmq^z%)pkf0d+y7g%$34d7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 SITE_ID = 1
 
@@ -47,6 +55,10 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'news_portal_app',
     'django_filters',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google'
 ]
 
 MIDDLEWARE = [
@@ -134,3 +146,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/protect/index'
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/news'
+
+ACCOUNT_FORMS = {'signup': 'news_portal_app.forms.BasicSignupForm'}

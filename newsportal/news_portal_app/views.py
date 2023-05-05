@@ -1,5 +1,7 @@
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from .models import Post, Author
 from .filters import PostFilter
 from .forms import PostForm
@@ -49,6 +51,7 @@ class ArticleCreate(CreateView):
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
         context['page_title'] = "Добавить статью"
+        context['is_not_authors'] = self.request.user.groups.filter(name='authors').exists()
         return context
 
 
@@ -60,6 +63,7 @@ class ArticleUpdate(UpdateView):
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
         context['page_title'] = "Редактировать статью"
+        context['is_not_authors'] = self.request.user.groups.filter(name='authors').exists()
         return context
 
 
@@ -83,6 +87,7 @@ class NewsCreate(CreateView):
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
         context['page_title'] = "Добавить новость"
+        context['is_not_authors'] = self.request.user.groups.filter(name='authors').exists()
         return context
 
 
@@ -94,6 +99,7 @@ class NewsUpdate(UpdateView):
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
         context['page_title'] = "Редактировать новость"
+        context['is_not_authors'] = self.request.user.groups.filter(name='authors').exists()
         return context
 
 
@@ -107,3 +113,10 @@ class NewsDelete(DeleteView):
         context['page_title'] = "Удалить новость"
         context['previous_page_url'] = reverse_lazy('posts_list')
         return context
+    
+    
+class AddProduct(PermissionRequiredMixin, CreateView):
+    permission_required = ('news_portal_app.view_post',
+                           'news_portal_app.add_post',
+                           'news_portal_app.change_post',
+                           )
