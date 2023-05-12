@@ -6,7 +6,7 @@
 
 <! -- начало контента -->
 {% block content %}
-<div class="col-lg-12 text-center">
+<div class="col-lg-12 text-center" xmlns="http://www.w3.org/1999/html">
     <h1>Все посты</h1>
     <h3>Всего постов: {{ news|length }}</h3>
     <table class="table">
@@ -15,7 +15,7 @@
             <th scope="col">Заголовок</th>
             <th scope="col">Тип статьи</th>
             <th scope="col">Дата публикации</th>
-            <th scope="col">Автор</th>
+            <th scope="col">Категория</th>
             <th scope="col">Текст</th>
             <th scope="col">Ссылка на статью</th>
             <th scope="col">Редактировать</th>
@@ -32,7 +32,11 @@
                 <td>Новость</td>
             {% endif %}
             <td>{{ post.time | date:'d M Y' }}</td>
-            <td>{{ post.author.user.username }}</td>
+            <td>
+                {% for category in post.category.all %}
+                    {{ category.name_category }}
+                {% endfor %}
+            </td>
             <td>{{ post.text | truncatechars:20|censor }}</td>
             <td><a class="btn btn-primary btn-sm" href="/news/{{ post.pk }}">Читать</a></td>
             <td><a class="btn btn-primary btn-sm" href="/news/news/{{ post.pk }}/edit/">Редактировать</a></td>
@@ -78,5 +82,8 @@
         </ul>
     </nav>
 </div>
+<br>
+<br>
+<button> <a class="nav-link" href="/news/category/">Подписаться на рассылку</a> </button>
 <! -- конец контента -->
 {% endblock content %}

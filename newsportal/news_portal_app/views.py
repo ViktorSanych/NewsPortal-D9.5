@@ -1,10 +1,16 @@
+import os
+
+from django.core.mail import send_mail, EmailMessage
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, DeleteView
 from django.views.generic.edit import CreateView, UpdateView
-from django.contrib.auth.mixins import PermissionRequiredMixin
-from .models import Post, Author
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from .models import Post, Author, Category
 from .filters import PostFilter
 from .forms import PostForm
+from dotenv import load_dotenv
 
 
 class PostsList(ListView):
@@ -14,9 +20,14 @@ class PostsList(ListView):
     template_name = 'news.html'
     context_object_name = 'news'
 
+    def get_context_data(self, **kwargs):
+        context = super(PostsList, self).get_context_data(**kwargs)
+        return context
+
 
 class SearchAuthor(ListView):
     model = Author
+    context_object_name = 'author'
 
 
 class SearchPosts(ListView):
@@ -55,7 +66,7 @@ class ArticleCreate(CreateView):
         return context
 
 
-class ArticleUpdate(UpdateView):
+class ArticleUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -67,7 +78,7 @@ class ArticleUpdate(UpdateView):
         return context
 
 
-class ArticleDelete(DeleteView):
+class ArticleDelete(PermissionRequiredMixin, DeleteView):
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('posts_list')
@@ -91,7 +102,7 @@ class NewsCreate(CreateView):
         return context
 
 
-class NewsUpdate(UpdateView):
+class NewsUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -103,7 +114,7 @@ class NewsUpdate(UpdateView):
         return context
 
 
-class NewsDelete(DeleteView):
+class NewsDelete(PermissionRequiredMixin, DeleteView):
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('posts_list')
@@ -120,3 +131,28 @@ class AddProduct(PermissionRequiredMixin, CreateView):
                            'news_portal_app.add_post',
                            'news_portal_app.change_post',
                            )
+
+
+class CategorySubscribeView(ListView):
+    model = Category
+    template_name = 'post_category.html'
+    context_object_name = 'post_category'
+
+    def get_context_data(self, **kwargs):
+        context = super(CategorySubscribeView, self).get_context_data(**kwargs)
+        return context
+
+
+@login_required
+def subscribe_category(request, pk):
+    user = request.user
+    category = Category.objects.get(pk=pk)
+    category.subscribers.add(user)
+    email = user.email
+    send_mail(
+        subject=f'News Portal: подпишись на обновления категории {category}',
+        message=f'"{email}", вы подписались на обновления категории {category}',
+        from_email='exampleforSF@yandex.ru',
+        recipient_list=[f'{email}', ],
+    )
+    return redirect('/news')

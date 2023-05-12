@@ -1,11 +1,6 @@
 import django_filters
-from .models import Post, Author
+from .models import Post
 import django.forms
-
-"""
-    Для фильтрации данных мы будем использовать сторонний Python-пакет
-    из PyPi – django-filter.
-"""
 
 
 class PostFilter(django_filters.FilterSet):
@@ -20,12 +15,6 @@ class PostFilter(django_filters.FilterSet):
         widget=django.forms.DateInput(
             attrs={'type': 'date', 'class': "form-control"}))
 
-#    date_time__lt = django_filters.DateFilter(
-#        field_name="time", label="До даты", lookup_expr='lt',
-#        widget=django.forms.DateInput(
-#            attrs={'type': 'date', 'class': "form-control"}))
-
     class Meta:
         model = Post
-        # Порядок в словаре определяет порядок вывода полей в HTML
         fields = ['title', 'author', 'date_time__gt']

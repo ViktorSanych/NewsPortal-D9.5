@@ -21,6 +21,7 @@ class Author(models.Model):
 
 class Category(models.Model):
     name_category = models.CharField(max_length=128, unique=True)
+    subscribers = models.ManyToManyField(User, related_name='subscriber', blank=True)
 
 
 class Post(models.Model):
@@ -54,10 +55,16 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('post_detail', args=[str(self.id)])
 
+    def message_subscriber(self):
+        return f'Новая статья - "{self.title}" в разделе "{self.category.first()}" '
+
 
 class PostCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_categories')
+
+    def __str__(self):
+        return f'{self.post}. {self.category}'
 
 
 class Comment(models.Model):
@@ -74,3 +81,7 @@ class Comment(models.Model):
     def dislike(self):
         self.rating = - 1
         self.save()
+
+    def __str__(self):
+        # return self.commentPost.author.authorUser.username  # получить имя автора поста
+        return f'{self.user.username}'
