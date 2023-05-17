@@ -1,16 +1,14 @@
-import os
-
-from django.core.mail import send_mail, EmailMessage
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.core.mail import send_mail
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, DeleteView
 from django.views.generic.edit import CreateView, UpdateView
-from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
-from .models import Post, Author, Category
+
 from .filters import PostFilter
 from .forms import PostForm
-from dotenv import load_dotenv
+from .models import Post, Author, Category
 
 
 class PostsList(ListView):
